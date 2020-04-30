@@ -121,8 +121,7 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
 
     if tipo_estrategia == 2:
 
-        print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
-        print('Jugador: {}'.format(jugador+1))
+        print("\x1b[3;32m"+'Jugador: {}'.format(jugador+1))
 
         if tipo_capital == 1:
             apuesta_actual = int(input("\x1b[3;32m"+'Apuesta inicial: '))
