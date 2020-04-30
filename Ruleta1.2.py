@@ -118,7 +118,8 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                     apuesta_actual = apuesta_actual * 2
 
                 tiradas+=1
-
+                frecuencia = n_ganador/tiradas
+                frecuencias.append(frecuencia)
 
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
             print('Gano {} de {}'.format(n_ganador,cant_tiradas))
@@ -145,6 +146,8 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                     apuesta_actual = apuesta_actual + 1
                     resultado = "Perdio"
                 tiradas += 1
+                frecuencia = n_ganador/tiradas
+                frecuencias.append(frecuencia)
 
                 print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
                 print('{} la {}° tirada - Posee un Capital de: {}'.format(resultado,tiradas-1,capital))
@@ -161,10 +164,14 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                         n_ganador += 1
                     else:
                         apuesta_actual = apuesta_actual + 1
-
+                    frecuencia = n_ganador/tiradas
+                    frecuencias.append(frecuencia)
                 print('Gano {} de {}'.format(n_ganador,cant_tiradas-1))
+
+
     frecuencias2.append(frecuencias)
     grafica_frecuencia(frecuencias2)
+
 def main():
 
     # RULETA
