@@ -118,25 +118,36 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                     apuesta_actual = apuesta_actual * 2
 
                 tiradas+=1
-                frecuencia = n_ganador/tiradas
+                frecuencia = n_ganador/cant_tiradas
                 frecuencias.append(frecuencia)
 
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
-            print('Gano {} de {}'.format(n_ganador,cant_tiradas))
+            print('Jugador: {}'.format(jugador+1))
+
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
-            print('Negros: {} - Rojos: {} - Verdes: {}'.format(negros,rojos,verdes))
+            print('\nGano {} de {}'.format(n_ganador,cant_tiradas-1))
+            print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
+            print('\nNegros: {} - Rojos: {} - Verdes: {}'.format(negros,rojos,verdes))
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
 
     if tipo_estrategia == 2:
 
         print("\x1b[3;32m"+'Jugador: {}'.format(jugador+1))
-
+        apuesta_actual = int(input("\x1b[3;32m"+'Apuesta inicial: '))
         if tipo_capital == 1:
-            apuesta_actual = int(input("\x1b[3;32m"+'Apuesta inicial: '))
             while capital >= apuesta_actual and tiradas <= cant_tiradas and apuesta_actual > 1:
-                color_random = rand.randint(0,1)
-                color_jugado = rand.randint(0,1)
+                color_random = retorna_color(rand.randint(0,36))
+                color_jugado = rand.randint(0,1) # 0:Rojo - 1:Negro
+
+                if color_random == 0:
+                    rojos += 1
+                elif color_random == 1:
+                    negros += 1
+                else:
+                    verdes += 1
+
                 if color_jugado == color_random:
+
                     capital = capital + apuesta_actual
                     apuesta_actual = apuesta_actual - 1
                     n_ganador += 1
@@ -157,16 +168,36 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
         if tipo_capital == 2:
             if apuesta_actual > 1:
                 for i in range(0,cant_tiradas):
-                    color_random = rand.randint(0,1)
-                    color_jugado = rand.randint(0,1)
+                    color_random = retorna_color(rand.randint(0,36))
+                    color_jugado = rand.randint(0,1) # 0:Rojo - 1:Negro
+
+                    if color_random == 0:
+                        rojos += 1
+                    elif color_random == 1:
+                        negros += 1
+                    else:
+                        verdes += 1
+
                     if color_jugado == color_random:
                         apuesta_actual = apuesta_actual - 1
                         n_ganador += 1
+                        #resultado = "Gano"
                     else:
                         apuesta_actual = apuesta_actual + 1
+                        #resultado = "Perdio"
+                    tiradas += 1
                     frecuencia = n_ganador/tiradas
                     frecuencias.append(frecuencia)
-                print('Gano {} de {}'.format(n_ganador,cant_tiradas-1))
+                    
+                print(frecuencia)
+                print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
+                print('Jugador: {}'.format(jugador+1))
+
+                print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
+                print('\nGano {} de {}'.format(n_ganador,cant_tiradas))
+                print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
+                print('\nNegros: {} - Rojos: {} - Verdes: {}'.format(negros,rojos,verdes))
+                print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
 
 
     frecuencias2.append(frecuencias)
