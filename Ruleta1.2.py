@@ -19,13 +19,13 @@ def grafica_frecuencia(frecuencias):
     plt.grid()
     plt.show()
 
-def grafica_cantidad_capital(capitales, tiradas, capital):
+def grafica_cantidad_capital(capitales, capital_inicial):
     # Promedio
-    for capital in capitales:
-        plt.plot(capital)
+    for c in capitales:
+         plt.plot(c)
 
     plt.title('Grafico de Capital')
-    plt.axhline(capital, color='blue')
+    plt.axhline(capital_inicial, color='blue')
     plt.ylabel('Capital')
     plt.xlabel('Tiradas')
     plt.legend()
@@ -55,8 +55,8 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
     verdes = 0
 
     capital_inicial = capital
-    capitales = np.array([])
-    capitales_grafico = np.array([])
+    capitales = []
+    capitales_grafico = []
 
     frecuencias = []
     frecuencias_grafico = []
@@ -88,7 +88,7 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
 
                 tiradas += 1
                 frecuencia = n_ganador/tiradas
-                np.append(capitales,capital)
+                capitales.append(capital)
                 frecuencias.append(frecuencia)
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
             print('Jugador: {}'.format(jugador+1))
@@ -102,9 +102,8 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
 
 
         if tipo_capital == 2:
-
+            apuesta_actual = 1
             for i in range(0,cant_tiradas):
-
                 color_random = retorna_color(rand.randint(0,36))
                 color_jugado = rand.randint(0,1) # 0:Rojo - 1:Negro
 
@@ -116,15 +115,17 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                     verdes += 1
 
                 if color_jugado == color_random:
+                    capital = capital + apuesta_actual
                     apuesta_actual = 1
                     n_ganador += 1
                 else:
+                    capital = capital - apuesta_actual
                     apuesta_actual = apuesta_actual * 2
 
                 tiradas+=1
                 frecuencia = n_ganador/cant_tiradas
                 frecuencias.append(frecuencia)
-
+                capitales.append(capital)
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
             print('Jugador: {}'.format(jugador+1))
 
@@ -163,7 +164,7 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                 tiradas += 1
                 frecuencia = n_ganador/tiradas
                 frecuencias.append(frecuencia)
-                np.append(capitales,capital)
+                capitales.append(capital)
 
                 print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
                 print('{} la {}° tirada - Posee un Capital de: {}'.format(resultado,tiradas-1,capital))
@@ -184,15 +185,18 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                         verdes += 1
 
                     if color_jugado == color_random:
+                        capital = capital + apuesta_actual
                         apuesta_actual = apuesta_actual - 1
                         n_ganador += 1
                         #resultado = "Gano"
                     else:
+                        capital = capital - apuesta_actual
                         apuesta_actual = apuesta_actual + 1
                         #resultado = "Perdio"
                     tiradas += 1
                     frecuencia = n_ganador/tiradas
                     frecuencias.append(frecuencia)
+                    capitales.append(capital)
                     
                 print(frecuencia)
                 print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
@@ -204,11 +208,11 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                 print('\nNegros: {} - Rojos: {} - Verdes: {}'.format(negros,rojos,verdes))
                 print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
 
-
-    capitales_grafico = np.append(capitales, capitales_grafico) # Historial de Capital por Tirada, para ver en el Grafico.
+    capitales_grafico.append(capitales) # Historial de Capital por Tirada, para ver en el Grafico.
+    grafica_cantidad_capital(capitales_grafico,capital_inicial) # Llamo al grafico.
     frecuencias_grafico.append(frecuencias)
     grafica_frecuencia(frecuencias_grafico)
-    grafica_cantidad_capital(capitales_grafico, tiradas, capital_inicial) # Llamo al grafico.
+
 
 def main():
 
@@ -240,7 +244,7 @@ def main():
     if tipo_capital == 1:
         capital = int(input("\x1b[3;32m"+'Ingrese el capital inicial: '))
     elif tipo_capital == 2:
-        capital = 0
+        capital =9999999
 
     for jugador in range(0,cant_jugadores):
         ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital)
