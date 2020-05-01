@@ -19,14 +19,13 @@ def grafica_frecuencia(frecuencias):
     plt.grid()
     plt.show()
 
-def grafica_cantidad_capital(capitales, tiradas):
+def grafica_cantidad_capital(capitales, tiradas, capital):
     # Promedio
     for capital in capitales:
-        for i in tiradas:
-            plt.plot(i, capital)
+        plt.plot(capital)
 
     plt.title('Grafico de Capital')
-    plt.axhline((47.4)/100, color='blue')
+    plt.axhline(capital, color='blue')
     plt.ylabel('Capital')
     plt.xlabel('Tiradas')
     plt.legend()
@@ -55,10 +54,11 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
     negros = 0
     verdes = 0
 
-    frecuencias = []
+    capital_inicial = capital
     capitales = np.array([])
-
     capitales_grafico = np.array([])
+
+    frecuencias = []
     frecuencias_grafico = []
 
 
@@ -208,7 +208,7 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
     capitales_grafico = np.append(capitales, capitales_grafico) # Historial de Capital por Tirada, para ver en el Grafico.
     frecuencias_grafico.append(frecuencias)
     grafica_frecuencia(frecuencias_grafico)
-    grafica_cantidad_capital(capitales_grafico, tiradas) # Llamo al grafico.
+    grafica_cantidad_capital(capitales_grafico, tiradas, capital_inicial) # Llamo al grafico.
 
 def main():
 
