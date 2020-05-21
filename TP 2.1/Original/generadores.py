@@ -6,13 +6,9 @@ class GeneradorMiddleSquare:
     def __init__(self, seed):
         self.seed = seed
 
-    def gen(self, interval):
-        lower, upper = interval[0], interval[1]
+    def gen(self):
+        div=10000 #divisor de la x para que devuelva un valor entre 0 y 1
         x = self.seed
-        if len(str(x)) > 4:
-            x = x[:4]
-        while len(str(x)) < 4:
-            x = int(str(x)+"1")
         while True:
             square = x * x
             if len(str(square)) < 8:
@@ -23,15 +19,15 @@ class GeneradorMiddleSquare:
                 square = addZero + str(square)  
             else: 
                 square = str(square)
-            x = int(square[2] + square[3] + square[4] + square[5])
-            yield x
+            x = float(square[2] + square[3] + square[4] + square[5])
+            yield x/div
     
-    def muestra(self, n, interval):
+    def muestra(self, n):
         sample = []
-        generadorsito = self.gen(interval)
+        generadorsito = self.gen()
         for i in range(n):
-            observation = next(generadorsito)
-            sample.append(int(observation))
+            observation = float(next(generadorsito))
+            sample.append(float(observation))
 
         return sample
 
@@ -44,8 +40,7 @@ class GeneradorGCL:
     def __init__(self, seed):
         self.seed = seed
 
-    def gen(self, interval):
-        lower, upper = interval[0], interval[1]
+    def gen(self):
         # parameters as in GNU C Library
         a = 1103515245 #Multiplicador
         c = 12345 #Incremento
@@ -54,13 +49,16 @@ class GeneradorGCL:
         while True:
             xf = (a * xi + c) % m
             xi = xf
-            yield int((upper - lower) * (xf / (m - 1)) + lower)
+            yield xf
 
-    def muestra(self, n, interval):
+    def muestra(self, n):
+        #lower, upper = interval[0], interval[1]
+        m = 2**32
         sample = []
-        generadorsito = self.gen(interval)
-        for i in range(n):
-            observation = next(generadorsito)
-            sample.append(int(observation))
+        generadorsito = self.gen()
+        for _ in range(n):
+            sample.append(next(generadorsito)/m)
+            #observation = int((upper - lower) * (next(generadorsito) / (m - 1)) + lower)
+            #sample.append(int(observation))
 
         return sample

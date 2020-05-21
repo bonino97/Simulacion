@@ -43,7 +43,6 @@ def retorna_color(valor):
     if valor == 0: 
         return 2
 
-
 def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
 
     tiradas = 1
@@ -123,9 +122,10 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
                     apuesta_actual = apuesta_actual * 2
 
                 tiradas+=1
-                frecuencia = n_ganador/cant_tiradas
+                frecuencia = n_ganador/tiradas
                 frecuencias.append(frecuencia)
                 capitales.append(capital)
+
             print("\x1b[0;36m"+'--------------------------------------------------------------------------------')
             print('Jugador: {}'.format(jugador+1))
 
@@ -212,7 +212,6 @@ def ruleta(cant_tiradas,tipo_estrategia, jugador, tipo_capital, capital):
     grafica_cantidad_capital(capitales_grafico,capital_inicial) # Llamo al grafico.
     frecuencias_grafico.append(frecuencias)
     grafica_frecuencia(frecuencias_grafico)
-
 
 def main():
 
