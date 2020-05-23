@@ -5,7 +5,7 @@ import collections
 
 class ChiCuadrado:
     
-    def chiCuadrado(self, muestra):
+    def Test(self, muestra):
         valorTabla = 16.9190 # con alpha 0.05 y grado de libertad 9
         freq_esperada = len(muestra)/10
         frecuencias = np.zeros(10)

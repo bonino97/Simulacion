@@ -4,7 +4,7 @@ import collections
 
 class KolmogorovSmirnov:
 
-    def kstest(self, muestra):
+    def Test(self, muestra):
         muestra = sorted(muestra)
         d_plus = []
         d_minus = []

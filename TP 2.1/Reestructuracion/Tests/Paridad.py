@@ -4,7 +4,7 @@ import collections
 
 class Paridad: 
 
-    def testParidad(self, muestra):
+    def Test(self, muestra):
         n = len(muestra)
         x = 0
         for m in muestra:
