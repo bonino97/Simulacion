@@ -15,7 +15,7 @@ class Index:
         
         #Creando un Frame Container.
         frame = LabelFrame(self.wind, text = 'Ingrese una Semilla: ')
-        frame.grid(row = 1, column  = 1, columnspan = 3, pady = 20)
+        frame.grid(row = 1, column  = 1, columnspan = 1, pady = 10)
 
         #Input Semilla
         Label(frame, text = '').grid(row = 0, column = 1)
@@ -23,16 +23,25 @@ class Index:
         self.seed.focus()
         self.seed.grid(row = 2, column = 1)
 
+        #Creando un Frame Container.
+        tamFrame = LabelFrame(self.wind, text = 'Tamaño Muestral: ')
+        tamFrame.grid(row = 2, column  = 1, columnspan = 2, pady = 10)
+
+        #Input Tamaño Muestral
+        Label(tamFrame, text = '').grid(row = 0, column = 1)
+        self.index = Entry(tamFrame)
+        self.index.grid(row = 2, column = 1)
+
         #Boton AddSeed
-        ttk.Button(frame, text = "Ejecutar", command = self.Execute).grid(row = 3, columnspan = 2, sticky = W + E)
+        ttk.Button(tamFrame, text = "Ejecutar", command = self.Execute).grid(row = 3, columnspan = 2, sticky = W + E)
 
         #Mensaje Error
         self.message = Label(text = '', fg = 'red')
-        self.message.grid(row = 3, column = 1, columnspan = 1, sticky = W + E)
+        self.message.grid(row = 4, column = 1, columnspan = 1, sticky = W + E)
 
     def Execute(self):
         if self.Validation():
-            index = 1000
+            index = int(self.index.get())
             seed = self.seed.get()
 
             #Python Random Generator
@@ -99,25 +108,238 @@ class Index:
 
             Label(self.RandomWindow, text = 'Test Arriba Abajo de la Media.', font="Helvetica 11 bold").grid(row = 17, column = 0, sticky = W)
             Label(self.RandomWindow, text = 'Resultado: ').grid(row = 18, column = 0, sticky = W)
-            if RandomChiCuadradoResult:
-                Label(self.RandomWindow, text = str(RandomChiCuadradoResult), fg = 'green').grid(row = 18, column = 1, sticky = W)
+            if RandomCorridaArribaAbajoResult:
+                Label(self.RandomWindow, text = str(RandomCorridaArribaAbajoResult), fg = 'green').grid(row = 18, column = 1, sticky = W)
             else:
-                Label(self.RandomWindow, text = str(RandomChiCuadradoResult), fg = 'red').grid(row = 18, column = 1, sticky = W)
+                Label(self.RandomWindow, text = str(RandomCorridaArribaAbajoResult), fg = 'red').grid(row = 18, column = 1, sticky = W)
             Label(self.RandomWindow, text = 'Media: ').grid(row = 19, column = 0, sticky = W)
-            Label(self.RandomWindow, text = RandomChiCuadradoValorTabla).grid(row = 19, column = 1, sticky = W)
+            Label(self.RandomWindow, text = RandomCorridaArribaAbajoMedia).grid(row = 19, column = 1, sticky = W)
             Label(self.RandomWindow, text = 'Z: ').grid(row = 20, column = 0, sticky = W)
-            Label(self.RandomWindow, text = RandomChiCuadradoSuma).grid(row = 20, column = 1, sticky = W)
+            Label(self.RandomWindow, text = RandomCorridaArribaAbajoZ).grid(row = 20, column = 1, sticky = W)
             Label(self.RandomWindow, text = '___________________________________________________', fg='black').grid(row = 21, column = 0)
 
 
             #NumPy Generator
             arrayNumPy = self.GeneradorNumPy(index, int(seed))
+
+            NumPyParidadResult, NumPyParidadFrec = self.Paridad(arrayNumPy)
+            NumPyKsResult, NumPyKsD, NumPyKsDEstimada = self.KolmogorovSmirnov(arrayNumPy)
+            NumPyChiCuadradoResult, NumPyChiCuadradoSuma, NumPyChiCuadradoValorTabla, NumPyChiCuadradoFrecEstimada = self.ChiCuadrado(arrayNumPy)
+            NumPyCorridaArribaAbajoResult, NumPyCorridaArribaAbajoZ, NumPyCorridaArribaAbajoMedia = self.CorridaArribaAbajo(arrayNumPy)
+
+            self.NumPyWindow = Toplevel()             
+
+            ##############################################
+            # ---       Generador NumPy Paridad     --- #
+            ##############################################
+
+            Label(self.NumPyWindow, text = 'Generador NumPy', font="Helvetica 14 bold", fg = "green", anchor = CENTER).grid(row = 0, column = 0)
+            Label(self.NumPyWindow, text = '___________________________________________________', fg='black').grid(row = 1, column = 0)
+            Label(self.NumPyWindow, text = 'Test de Paridad.', font="Helvetica 11 bold").grid(row = 2, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = 'Resultado: ').grid(row = 3, column = 0, sticky = W)
+            if NumPyParidadResult: 
+                Label(self.NumPyWindow, text = str(NumPyParidadResult), fg = 'green').grid(row = 3, column = 1, sticky = W)    
+            else: 
+                Label(self.NumPyWindow, text = str(NumPyParidadResult), fg = 'red').grid(row = 3, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'Frecuencia: ').grid(row = 4, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyParidadFrec).grid(row = 4, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = '___________________________________________________', fg='black').grid(row = 5, column = 0)
+
+            ###############################################
+            # --- Generador NumPy Kolmogorov Smirnov --- #
+            ###############################################
+
+            Label(self.NumPyWindow, text = 'Test de Kolmogorov-Smirnov.', font="Helvetica 11 bold").grid(row = 6, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = 'Resultado: ').grid(row = 8, column = 0, sticky = W)
+            if NumPyKsResult:
+                Label(self.NumPyWindow, text = str(NumPyKsResult), fg = 'green').grid(row = 8, column = 1, sticky = W)
+            else:
+                Label(self.NumPyWindow, text = str(NumPyKsResult), fg = 'red').grid(row = 8, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'D - Resultante: ').grid(row = 9, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyKsD).grid(row = 9, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'D - Estimada: ').grid(row = 10, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyKsDEstimada).grid(row = 10, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = '___________________________________________________', fg='black').grid(row = 11, column = 0)
+
+            ###############################################
+            # ---    Generador NumPy ChiCuadrado     --- #
+            ###############################################
+
+            Label(self.NumPyWindow, text = 'Test de ChiCuadrado.', font="Helvetica 11 bold").grid(row = 12, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = 'Resultado: ').grid(row = 13, column = 0, sticky = W)
+            if NumPyChiCuadradoResult:
+                Label(self.NumPyWindow, text = str(NumPyChiCuadradoResult), fg = 'green').grid(row = 13, column = 1, sticky = W)
+            else:
+                Label(self.NumPyWindow, text = str(NumPyChiCuadradoResult), fg = 'red').grid(row = 13, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'Valor Tabla: ').grid(row = 14, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyChiCuadradoValorTabla).grid(row = 14, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'Suma de Frecuencias: ').grid(row = 15, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyChiCuadradoSuma).grid(row = 15, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = '___________________________________________________', fg='black').grid(row = 16, column = 0)
+
+            ###############################################
+            #--  Generador NumPy Corrida Arriba Abajo -- #
+            ###############################################
+
+            Label(self.NumPyWindow, text = 'Test Arriba Abajo de la Media.', font="Helvetica 11 bold").grid(row = 17, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = 'Resultado: ').grid(row = 18, column = 0, sticky = W)
+            if NumPyCorridaArribaAbajoResult:
+                Label(self.NumPyWindow, text = str(NumPyCorridaArribaAbajoResult), fg = 'green').grid(row = 18, column = 1, sticky = W)
+            else:
+                Label(self.NumPyWindow, text = str(NumPyCorridaArribaAbajoResult), fg = 'red').grid(row = 18, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'Media: ').grid(row = 19, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyCorridaArribaAbajoMedia).grid(row = 19, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = 'Z: ').grid(row = 20, column = 0, sticky = W)
+            Label(self.NumPyWindow, text = NumPyCorridaArribaAbajoZ).grid(row = 20, column = 1, sticky = W)
+            Label(self.NumPyWindow, text = '___________________________________________________', fg='black').grid(row = 21, column = 0)
             
             #MiddleSquare Generator
             arrayMiddleSqr = self.GeneradorMiddleSquare(index, int(seed))
 
+            MiddleSqrParidadResult, MiddleSqrParidadFrec = self.Paridad(arrayMiddleSqr)
+            MiddleSqrKsResult, MiddleSqrKsD, MiddleSqrKsDEstimada = self.KolmogorovSmirnov(arrayMiddleSqr)
+            MiddleSqrChiCuadradoResult, MiddleSqrChiCuadradoSuma, MiddleSqrChiCuadradoValorTabla, MiddleSqrChiCuadradoFrecEstimada = self.ChiCuadrado(arrayMiddleSqr)
+            MiddleSqrCorridaArribaAbajoResult, MiddleSqrCorridaArribaAbajoZ, MiddleSqrCorridaArribaAbajoMedia = self.CorridaArribaAbajo(arrayMiddleSqr)
+
+            self.MiddleSqrWindow = Toplevel()             
+
+            ##############################################
+            # ---       Generador MiddleSqr Paridad     --- #
+            ##############################################
+
+            Label(self.MiddleSqrWindow, text = 'Generador MiddleSqr', font="Helvetica 14 bold", fg = "green", anchor = CENTER).grid(row = 0, column = 0)
+            Label(self.MiddleSqrWindow, text = '___________________________________________________', fg='black').grid(row = 1, column = 0)
+            Label(self.MiddleSqrWindow, text = 'Test de Paridad.', font="Helvetica 11 bold").grid(row = 2, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Resultado: ').grid(row = 3, column = 0, sticky = W)
+            if MiddleSqrParidadResult: 
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrParidadResult), fg = 'green').grid(row = 3, column = 1, sticky = W)    
+            else: 
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrParidadResult), fg = 'red').grid(row = 3, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Frecuencia: ').grid(row = 4, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrParidadFrec).grid(row = 4, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = '___________________________________________________', fg='black').grid(row = 5, column = 0)
+
+            ###############################################
+            # --- Generador MiddleSqr Kolmogorov Smirnov --- #
+            ###############################################
+
+            Label(self.MiddleSqrWindow, text = 'Test de Kolmogorov-Smirnov.', font="Helvetica 11 bold").grid(row = 6, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Resultado: ').grid(row = 8, column = 0, sticky = W)
+            if MiddleSqrKsResult:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrKsResult), fg = 'green').grid(row = 8, column = 1, sticky = W)
+            else:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrKsResult), fg = 'red').grid(row = 8, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'D - Resultante: ').grid(row = 9, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrKsD).grid(row = 9, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'D - Estimada: ').grid(row = 10, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrKsDEstimada).grid(row = 10, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = '___________________________________________________', fg='black').grid(row = 11, column = 0)
+
+            ###############################################
+            # ---    Generador MiddleSqr ChiCuadrado     --- #
+            ###############################################
+
+            Label(self.MiddleSqrWindow, text = 'Test de ChiCuadrado.', font="Helvetica 11 bold").grid(row = 12, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Resultado: ').grid(row = 13, column = 0, sticky = W)
+            if MiddleSqrChiCuadradoResult:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrChiCuadradoResult), fg = 'green').grid(row = 13, column = 1, sticky = W)
+            else:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrChiCuadradoResult), fg = 'red').grid(row = 13, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Valor Tabla: ').grid(row = 14, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrChiCuadradoValorTabla).grid(row = 14, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Suma de Frecuencias: ').grid(row = 15, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrChiCuadradoSuma).grid(row = 15, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = '___________________________________________________', fg='black').grid(row = 16, column = 0)
+
+            ###############################################
+            #--  Generador MiddleSqr Corrida Arriba Abajo -- #
+            ###############################################
+
+            Label(self.MiddleSqrWindow, text = 'Test Arriba Abajo de la Media.', font="Helvetica 11 bold").grid(row = 17, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Resultado: ').grid(row = 18, column = 0, sticky = W)
+            if MiddleSqrCorridaArribaAbajoResult:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrCorridaArribaAbajoResult), fg = 'green').grid(row = 18, column = 1, sticky = W)
+            else:
+                Label(self.MiddleSqrWindow, text = str(MiddleSqrCorridaArribaAbajoResult), fg = 'red').grid(row = 18, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Media: ').grid(row = 19, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrCorridaArribaAbajoMedia).grid(row = 19, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = 'Z: ').grid(row = 20, column = 0, sticky = W)
+            Label(self.MiddleSqrWindow, text = MiddleSqrCorridaArribaAbajoZ).grid(row = 20, column = 1, sticky = W)
+            Label(self.MiddleSqrWindow, text = '___________________________________________________', fg='black').grid(row = 21, column = 0)
+
             #GCL Generator
             arrayGCL = self.GeneradorGCL(index, int(seed))
+
+            GCLParidadResult, GCLParidadFrec = self.Paridad(arrayGCL)
+            GCLKsResult, GCLKsD, GCLKsDEstimada = self.KolmogorovSmirnov(arrayGCL)
+            GCLChiCuadradoResult, GCLChiCuadradoSuma, GCLChiCuadradoValorTabla, GCLChiCuadradoFrecEstimada = self.ChiCuadrado(arrayGCL)
+            GCLCorridaArribaAbajoResult, GCLCorridaArribaAbajoZ, GCLCorridaArribaAbajoMedia = self.CorridaArribaAbajo(arrayGCL)
+
+            self.GCLWindow = Toplevel()             
+
+            ##############################################
+            # ---       Generador GCL Paridad     --- #
+            ##############################################
+
+            Label(self.GCLWindow, text = 'Generador GCL', font="Helvetica 14 bold", fg = "green", anchor = CENTER).grid(row = 0, column = 0)
+            Label(self.GCLWindow, text = '___________________________________________________', fg='black').grid(row = 1, column = 0)
+            Label(self.GCLWindow, text = 'Test de Paridad.', font="Helvetica 11 bold").grid(row = 2, column = 0, sticky = W)
+            Label(self.GCLWindow, text = 'Resultado: ').grid(row = 3, column = 0, sticky = W)
+            if GCLParidadResult: 
+                Label(self.GCLWindow, text = str(GCLParidadResult), fg = 'green').grid(row = 3, column = 1, sticky = W)    
+            else: 
+                Label(self.GCLWindow, text = str(GCLParidadResult), fg = 'red').grid(row = 3, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'Frecuencia: ').grid(row = 4, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLParidadFrec).grid(row = 4, column = 1, sticky = W)
+            Label(self.GCLWindow, text = '___________________________________________________', fg='black').grid(row = 5, column = 0)
+
+            ###############################################
+            # --- Generador GCL Kolmogorov Smirnov --- #
+            ###############################################
+
+            Label(self.GCLWindow, text = 'Test de Kolmogorov-Smirnov.', font="Helvetica 11 bold").grid(row = 6, column = 0, sticky = W)
+            Label(self.GCLWindow, text = 'Resultado: ').grid(row = 8, column = 0, sticky = W)
+            if GCLKsResult:
+                Label(self.GCLWindow, text = str(GCLKsResult), fg = 'green').grid(row = 8, column = 1, sticky = W)
+            else:
+                Label(self.GCLWindow, text = str(GCLKsResult), fg = 'red').grid(row = 8, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'D - Resultante: ').grid(row = 9, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLKsD).grid(row = 9, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'D - Estimada: ').grid(row = 10, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLKsDEstimada).grid(row = 10, column = 1, sticky = W)
+            Label(self.GCLWindow, text = '___________________________________________________', fg='black').grid(row = 11, column = 0)
+
+            ###############################################
+            # ---    Generador GCL ChiCuadrado     --- #
+            ###############################################
+
+            Label(self.GCLWindow, text = 'Test de ChiCuadrado.', font="Helvetica 11 bold").grid(row = 12, column = 0, sticky = W)
+            Label(self.GCLWindow, text = 'Resultado: ').grid(row = 13, column = 0, sticky = W)
+            if GCLChiCuadradoResult:
+                Label(self.GCLWindow, text = str(GCLChiCuadradoResult), fg = 'green').grid(row = 13, column = 1, sticky = W)
+            else:
+                Label(self.GCLWindow, text = str(GCLChiCuadradoResult), fg = 'red').grid(row = 13, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'Valor Tabla: ').grid(row = 14, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLChiCuadradoValorTabla).grid(row = 14, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'Suma de Frecuencias: ').grid(row = 15, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLChiCuadradoSuma).grid(row = 15, column = 1, sticky = W)
+            Label(self.GCLWindow, text = '___________________________________________________', fg='black').grid(row = 16, column = 0)
+
+            ###############################################
+            #--  Generador GCL Corrida Arriba Abajo -- #
+            ###############################################
+
+            Label(self.GCLWindow, text = 'Test Arriba Abajo de la Media.', font="Helvetica 11 bold").grid(row = 17, column = 0, sticky = W)
+            Label(self.GCLWindow, text = 'Resultado: ').grid(row = 18, column = 0, sticky = W)
+            if GCLCorridaArribaAbajoResult:
+                Label(self.GCLWindow, text = str(GCLCorridaArribaAbajoResult), fg = 'green').grid(row = 18, column = 1, sticky = W)
+            else:
+                Label(self.GCLWindow, text = str(GCLCorridaArribaAbajoResult), fg = 'red').grid(row = 18, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'Media: ').grid(row = 19, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLCorridaArribaAbajoMedia).grid(row = 19, column = 1, sticky = W)
+            Label(self.GCLWindow, text = 'Z: ').grid(row = 20, column = 0, sticky = W)
+            Label(self.GCLWindow, text = GCLCorridaArribaAbajoZ).grid(row = 20, column = 1, sticky = W)
+            Label(self.GCLWindow, text = '___________________________________________________', fg='black').grid(row = 21, column = 0)
 
         else:
             self.message['text'] = '* Semilla Requerida'
@@ -291,18 +513,10 @@ class Index:
         mediaB = ((2*n1*n2)/(n1+n2))+1
         varianzaB = (2*n1*n2*((2*n1*n2)-N))/(N*N*(N-1))
         Z = (b - mediaB)/(np.sqrt(varianzaB))
-        #alfa = 0.05 , por lo tanto Z(1-(alfa/2)) = Z(0.025) = 1.96
-
-        print("Z calculada: "+str(Z)+" , Z(0.025) = 1.96")
-        print("¿|Z| < Z(0.025)?")
 
         if abs(Z)<1.96:
-            print("Test aprobado. Se demuestra la Independecia, por lo tanto, la aleatoriedad también")
-            print("")
             resultado = True
         else:
-            print("Test desaprobado. Se rechaza la independencia")
-            print("")
             resultado = False
         return resultado, Z, mediaMuestra
 
@@ -310,6 +524,6 @@ class Index:
 
 if __name__ == '__main__':
     window = Tk()
-    window.geometry('220x180')
+    window.geometry('180x220')
     application = Index(window)
     window.mainloop()  
